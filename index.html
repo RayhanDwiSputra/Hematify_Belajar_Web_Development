@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#09100e" />
+  <meta name="description" content="Hematify — kalkulator penghematan & target finansial. Ubah jajan kecil jadi impian besar." />
+  <title>Hematify — Hitung Hemat, Wujudkan Impian</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN + konfigurasi -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+</head>
+
+<body>
+  <!-- ============ SPLASH SCREEN ============ -->
+  <div id="splash" aria-label="Memuat Hematify">
+    <div class="flex flex-col items-center gap-6 px-6 text-center">
+      <div class="splash-logo">
+        <i data-lucide="trending-up" class="w-9 h-9"></i>
+      </div>
+      <h1 data-splash-word class="text-5xl sm:text-6xl font-extrabold tracking-tight">Hematify</h1>
+      <p class="splash-tag text-slate-400 text-sm sm:text-base">Receh hari ini, impian besar nanti.</p>
+      <div class="splash-bar"><span></span></div>
+      <p class="splash-skip text-xs text-slate-500">Ketuk untuk lewati</p>
+    </div>
+  </div>
+
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <div id="toast-host" role="status" aria-live="polite"></div>
+
+  <!-- ============ HEADER ============ -->
+  <header id="site-header" class="site-header">
+    <div class="mx-auto max-w-6xl px-5 h-16 flex items-center justify-between">
+      <button class="flex items-center gap-2 font-extrabold text-lg tracking-tight" data-goto="hero" aria-label="Ke beranda">
+        <span class="logo-mark"><i data-lucide="trending-up" class="w-4 h-4"></i></span>
+        Hematify
+      </button>
+      <nav class="hidden sm:flex items-center gap-1" aria-label="Navigasi utama">
+        <button class="nav-link is-active" data-nav="hero" data-goto="hero">Beranda</button>
+        <button class="nav-link" data-nav="calculator" data-goto="calculator">Hitung</button>
+        <button class="nav-link" data-nav="results" data-goto="results">Hasil</button>
+      </nav>
+      <button class="btn btn-primary !py-2 !px-4 text-sm" data-goto="calculator">Mulai Hitung</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ 1. HERO ============ -->
+    <section id="hero" data-section="hero" class="section is-active relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
+      <div class="blob" style="width:420px;height:420px;background:#10b981;top:-120px;right:-80px;animation:blobDrift 14s ease-in-out infinite"></div>
+      <div class="blob" style="width:340px;height:340px;background:#334155;bottom:-100px;left:-100px;animation:blobDrift 18s ease-in-out infinite reverse"></div>
+
+      <div class="relative mx-auto max-w-6xl w-full px-5 grid lg:grid-cols-2 gap-14 items-center">
+        <div>
+          <span class="hero-item badge" style="--i:0">
+            <i data-lucide="sparkles" class="w-4 h-4"></i> Kalkulator penghematan &amp; target finansial
+          </span>
+
+          <h2 class="hero-item mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight" style="--i:1">
+            Receh hari ini,<br /><span class="text-gradient">impian besar</span> nanti.
+          </h2>
+
+          <p class="hero-item mt-6 text-lg text-slate-400 max-w-xl leading-relaxed" style="--i:2">
+            Kopi, boba, jajan online — pengeluaran kecil yang terasa sepele ternyata bisa jadi HP baru,
+            emas, atau tiket liburan. Hitung sendiri, lihat hasilnya, dan mulai hemat dari sekarang.
+          </p>
+
+          <div class="hero-item mt-9 flex flex-wrap items-center gap-3" style="--i:3">
+            <button class="btn btn-primary btn-shine text-base" data-goto="calculator">
+              Mulai Hitung <i data-lucide="arrow-right" class="w-5 h-5 arrow"></i>
+            </button>
+            <a href="#cara-kerja" class="btn btn-ghost text-base" id="how-link">Lihat cara kerja</a>
+          </div>
+
+          <dl class="hero-item mt-12 grid grid-cols-3 gap-6 max-w-md" style="--i:4">
+            <div><dt class="text-xs text-slate-500">Langkah</dt><dd class="text-2xl font-extrabold">3</dd></div>
+            <div><dt class="text-xs text-slate-500">Target impian</dt><dd class="text-2xl font-extrabold">9</dd></div>
+            <div><dt class="text-xs text-slate-500">Biaya</dt><dd class="text-2xl font-extrabold text-gradient">Rp 0</dd></div>
+          </dl>
+        </div>
+
+        <!-- Kartu dekoratif -->
+        <div class="hero-item relative mx-auto w-full max-w-md" style="--i:3" aria-hidden="true">
+          <div class="glow-card mock-card p-7" style="animation:float 7s ease-in-out infinite">
+            <div class="flex items-center justify-between">
+              <p class="eyebrow">Tabungan impian</p>
+              <span class="status-chip is-ok">6 bulan</span>
+            </div>
+            <p class="mt-4 text-4xl font-extrabold tracking-tight text-gradient">Rp 4.550.000</p>
+            <p class="mt-1 text-sm text-slate-400">dari Kopi/Boba &amp; Jajan Online</p>
+
+            <div class="mt-7 space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="goal-icon !w-11 !h-11"><i data-lucide="smartphone" class="w-5 h-5"></i></div>
+                <div class="flex-1">
+                  <div class="flex justify-between text-sm font-semibold"><span>HP Baru</span><span class="text-emerald-300">Tercapai</span></div>
+                  <div class="progress mt-2"><div class="progress-bar" style="width:100%"></div></div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 opacity-80">
+                <div class="goal-icon !w-11 !h-11"><i data-lucide="gem" class="w-5 h-5"></i></div>
+                <div class="flex-1">
+                  <div class="flex justify-between text-sm font-semibold"><span>Emas Antam 2 Gram</span><span class="text-slate-400">91%</span></div>
+                  <div class="progress mt-2"><div class="progress-bar" style="width:91%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="floating-chip" style="top:-18px;right:-10px;animation:float 6s ease-in-out infinite .6s">
+            <i data-lucide="coffee" class="w-4 h-4 text-emerald-300"></i> Kopi × 3 / minggu
+          </div>
+          <div class="floating-chip" style="bottom:-16px;left:-14px;animation:float 8s ease-in-out infinite 1.2s">
+            <i data-lucide="piggy-bank" class="w-4 h-4 text-emerald-300"></i> + Rp 175.000 / minggu
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2. KALKULATOR ============ -->
+    <section id="calculator" data-section="calculator" class="section pt-28 pb-24">
+      <div class="mx-auto max-w-6xl px-5">
+        <p class="eyebrow">Langkah 1 &amp; 2</p>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight">Pilih kebiasaan yang mau kamu kurangi</h2>
+        <p class="mt-3 text-slate-400 max-w-2xl">
+          Aktifkan pengeluaran kecil yang ingin dihemat, sesuaikan harga &amp; frekuensinya, atau tambahkan kebiasaanmu sendiri.
+        </p>
+
+        <div class="mt-10 grid lg:grid-cols-3 gap-6 items-start">
+          <div class="lg:col-span-2">
+            <div id="habit-list" class="grid sm:grid-cols-2 gap-4"></div>
+
+            <!-- Form kebiasaan kustom -->
+            <form id="custom-form" class="glow-card mt-4 p-5 reveal" autocomplete="off">
+              <div class="flex items-center gap-2 font-semibold">
+                <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-300"></i> Tambah kebiasaan sendiri
+              </div>
+              <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <label class="field col-span-2 sm:col-span-1">
+                  <span>Nama</span>
+                  <input name="name" maxlength="28" placeholder="mis. Parkir kantor" />
+                </label>
+                <label class="field">
+                  <span>Harga (Rp)</span>
+                  <input name="price" data-money inputmode="numeric" placeholder="20.000" />
+                </label>
+                <label class="field">
+                  <span>Kali</span>
+                  <input name="qty" inputmode="numeric" value="1" />
+                </label>
+                <label class="field">
+                  <span>Per</span>
+                  <select name="unit">
+                    <option value="week">Minggu</option>
+                    <option value="day">Hari</option>
+                  </select>
+                </label>
+              </div>
+              <button type="submit" class="btn btn-ghost mt-4 !py-2.5 text-sm">
+                <i data-lucide="plus" class="w-4 h-4"></i> Tambahkan
+              </button>
+            </form>
+          </div>
+
+          <!-- Ringkasan live -->
+          <aside class="glow-card p-6 lg:sticky lg:top-24 reveal" style="--i:2" aria-label="Ringkasan penghematan">
+            <p class="eyebrow">Jangka waktu</p>
+            <div id="duration-pills" class="mt-3 flex flex-wrap gap-2"></div>
+
+            <div class="mt-7 pt-6 border-t border-white/10">
+              <p class="text-sm text-slate-400">Estimasi total hemat</p>
+              <p id="preview-total" class="mt-1 text-4xl font-extrabold tracking-tight text-gradient tabular-nums" aria-live="polite">Rp 0</p>
+              <p id="preview-hint" class="mt-2 text-sm text-slate-400 min-h-[1.25rem]"></p>
+            </div>
+
+            <dl class="mt-6 grid grid-cols-3 gap-3 text-center">
+              <div class="mini-stat"><dt>Per minggu</dt><dd id="preview-weekly">Rp 0</dd></div>
+              <div class="mini-stat"><dt>Per bulan</dt><dd id="preview-monthly">Rp 0</dd></div>
+              <div class="mini-stat"><dt>Aktif</dt><dd id="preview-count">0</dd></div>
+            </dl>
+
+            <button class="btn btn-primary btn-shine w-full mt-7" data-goto="results">
+              Lihat Hasil &amp; Impianku <i data-lucide="arrow-right" class="w-5 h-5 arrow"></i>
+            </button>
+          </aside>
+        </div>
+
+        <!-- Cara kerja -->
+        <div id="cara-kerja" class="mt-20 grid sm:grid-cols-3 gap-4">
+          <div class="glow-card p-6 reveal" style="--i:0">
+            <div class="goal-icon"><i data-lucide="list-checks" class="w-6 h-6"></i></div>
+            <h3 class="mt-4 font-semibold">1. Pilih kebiasaan</h3>
+            <p class="mt-1 text-sm text-slate-400">Tentukan pengeluaran kecil yang mau dikurangi beserta frekuensinya.</p>
+          </div>
+          <div class="glow-card p-6 reveal" style="--i:1">
+            <div class="goal-icon"><i data-lucide="calendar-range" class="w-6 h-6"></i></div>
+            <h3 class="mt-4 font-semibold">2. Tentukan waktu</h3>
+            <p class="mt-1 text-sm text-slate-400">Pilih 1 bulan, 3 bulan, 6 bulan, atau 1 tahun.</p>
+          </div>
+          <div class="glow-card p-6 reveal" style="--i:2">
+            <div class="goal-icon"><i data-lucide="target" class="w-6 h-6"></i></div>
+            <h3 class="mt-4 font-semibold">3. Lihat impianmu</h3>
+            <p class="mt-1 text-sm text-slate-400">Hematify mencocokkan total tabunganmu dengan target yang setara.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3. HASIL & GOAL VISUALIZER ============ -->
+    <section id="results" data-section="results" class="section pt-28 pb-24">
+      <div class="mx-auto max-w-6xl px-5">
+        <button class="btn btn-ghost !py-2 !px-4 text-sm" data-goto="calculator">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i> Ubah kebiasaan
+        </button>
+
+        <div id="result-empty" class="hidden glow-card mt-6 p-10 text-center">
+          <div class="goal-icon mx-auto"><i data-lucide="piggy-bank" class="w-6 h-6"></i></div>
+          <h2 class="mt-4 text-2xl font-bold">Belum ada yang dihitung</h2>
+          <p class="mt-2 text-slate-400">Aktifkan minimal satu kebiasaan untuk melihat hasilnya.</p>
+          <button class="btn btn-primary mt-6" data-goto="calculator">Pilih kebiasaan</button>
+        </div>
+
+        <div id="result-body">
+          <div class="glow-card result-hero mt-6 p-8 sm:p-12 text-center">
+            <p class="eyebrow">Total yang berhasil kamu hemat</p>
+            <p id="result-total" class="mt-3 text-5xl sm:text-7xl font-extrabold tracking-tight text-gradient tabular-nums">Rp 0</p>
+            <h2 id="result-headline" class="mt-6 text-xl sm:text-2xl font-bold leading-snug"></h2>
+            <p id="result-sub" class="mt-2 text-slate-400"></p>
+            <div id="duration-pills-results" class="mt-8 flex flex-wrap justify-center gap-2"></div>
+          </div>
+
+          <div id="result-stats" class="mt-4 grid sm:grid-cols-3 gap-4"></div>
+
+          <div class="mt-4 grid lg:grid-cols-5 gap-4">
+            <div class="glow-card p-6 lg:col-span-3">
+              <h3 class="font-semibold text-lg">Kontribusi tiap kebiasaan</h3>
+              <p class="text-sm text-slate-400 mt-1">Perbandingan seberapa besar tiap kebiasaan menyumbang tabunganmu.</p>
+              <div id="result-breakdown" class="mt-6 space-y-5"></div>
+            </div>
+            <div id="result-next" class="glow-card p-6 lg:col-span-2"></div>
+          </div>
+
+          <div class="mt-14">
+            <p class="eyebrow">Goal visualizer</p>
+            <h3 class="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight">Target impian yang setara dengan hematmu</h3>
+          </div>
+          <div id="result-goals" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+          <p class="mt-8 text-xs text-slate-500 leading-relaxed">
+            Harga target adalah estimasi dan dapat berubah. Perhitungan memakai rata-rata 52 minggu per tahun (±4,33 minggu per bulan).
+            Hematify bukan saran keuangan — gunakan sebagai motivasi dan gambaran kasar.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/5 py-8 text-center text-sm text-slate-500">
+    Hematify © 2026 — hemat sedikit demi sedikit, tapi konsisten.
+  </footer>
+
+  <!-- Lucide Icons (CDN) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Entry point (ES Modules) -->
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
